@@ -35,15 +35,7 @@
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
-<script>
-  const msg = new SpeechSynthesisUtterance();
-  let voices = [];
-  const voicesDropdown = document.querySelector('[name="voice"]');
-  const options = document.querySelectorAll('[type="range"], [name="text"]');
-  const speakButton = document.querySelector('#speak');
-  const stopButton = document.querySelector('#stop');
 
-  // Populate the voices dropdown with available voices
   function populateVoices() {
     voices = this.getVoices();
     voicesDropdown.innerHTML = voices
@@ -52,40 +44,28 @@
       .join('');
   }
 
-  // Set the voice for the message to be spoken
   function setVoice() {
     msg.voice = voices.find(voice => voice.name === this.value);
-    toggleSpeak();
+    toggle();
   }
 
-  // Update the message to be spoken when any of the options change
-  function setOption() {
-    msg[this.name] = this.value;
-    toggleSpeak();
-  }
-
-  // Toggle the speaking of the message
-  function toggleSpeak(startOver = true) {
+  function toggle(startOver = true) {
     speechSynthesis.cancel();
     if (startOver) {
       speechSynthesis.speak(msg);
     }
   }
 
-  // Start speaking the message when the Speak button is clicked
-  speakButton.addEventListener('click', toggleSpeak);
+  function setOption() {
+    msg[this.name] = this.value;
+    toggle();
+  }
 
-  // Stop speaking the message when the Stop button is clicked
-  stopButton.addEventListener('click', () => toggleSpeak(false));
-
-  // Load the available voices when the speech synthesis is ready
   speechSynthesis.addEventListener('voiceschanged', populateVoices);
-
-  // Set the voice for the message when the voices dropdown changes
   voicesDropdown.addEventListener('change', setVoice);
-
-  // Update the message to be spoken when any of the options change
   options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', toggle);
+  stopButton.addEventListener('click', () => toggle(false));
 </script>
 
 
